@@ -13,7 +13,7 @@ namespace Microsoft.BotBuilderSamples
     /// <summary>
     /// Represents a bot that processes incoming activities.
     /// For each user interaction, an instance of this class is created and the OnTurnAsync method is called.
-    /// This is a Transient lifetime service.  Transient lifetime services are created
+    /// This is a Transient lifetime service. Transient lifetime services are created
     /// each time they're requested. For each Activity received, a new instance of this
     /// class is created. Objects that are expensive to construct, or have a lifetime
     /// beyond the single turn, should be carefully managed.
@@ -130,8 +130,6 @@ namespace Microsoft.BotBuilderSamples
                 // Success is indicated by passing back the value the Prompt has collected. You must pass back a value even if you haven't changed it.
                 return Task.FromResult(true);
             }
-
-            // Not calling End indicates validation failure. This will trigger a RetryPrompt if one has been defined.
 
             // Note you are free to do async IO from within a validator. Here we had no need so just complete.
             return Task.FromResult(false);

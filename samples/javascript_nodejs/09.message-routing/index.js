@@ -5,10 +5,10 @@
 // See https://aka.ms/botbuildergenerator for more details.
 
 const path = require('path');
-const env = require('dotenv').config({ path: path.join(__dirname, '.env') });
 const restify = require('restify');
+require('dotenv').config({ path: path.join(__dirname, '.env') });
 
-const { BotFrameworkAdapter, BotStateSet,  MemoryStorage, ConversationState, UserState } = require('botbuilder');
+const { BotFrameworkAdapter, MemoryStorage, ConversationState, UserState } = require('botbuilder');
 const { BotConfiguration } = require('botframework-config');
 
 const MessageRoutingBot = require('./bot');
@@ -17,8 +17,8 @@ const BOT_CONFIGURATION_ERROR = 1;
 
 // Create server
 let server = restify.createServer();
-server.listen(process.env.port || process.env.PORT || 3978, function () {
-    console.log(`\n${server.name} listening to ${server.url}`);
+server.listen(process.env.port || process.env.PORT || 3978, function() {
+    console.log(`\n${ server.name } listening to ${ server.url }`);
     console.log(`\nGet the Emulator: https://aka.ms/botframework-emulator`);
     console.log(`\nTo talk to your bot, open the message-routing.bot file in the Emulator`);
 });
@@ -28,7 +28,7 @@ server.listen(process.env.port || process.env.PORT || 3978, function () {
 let botConfig;
 try {
     botConfig = BotConfiguration.loadSync(path.join(__dirname, process.env.botFilePath), process.env.botFileSecret);
-} catch(err) {
+} catch (err) {
     console.log(`Error reading bot file. Please ensure you have valid botFilePath and botFileSecret set for your environment.`);
     process.exit(BOT_CONFIGURATION_ERROR);
 }
@@ -49,11 +49,9 @@ adapter.onTurnError = async (context, error) => {
     //       application insights.
     console.error(`\n [onTurnError]: ${ error }`);
     // Send a message to the user
-    context.sendActivity(`Oops. Something went wrong!`);
+    await context.sendActivity(`Oops. Something went wrong!`);
     // Clear out state
-    await conversationState.clear(context);
-    // Save state changes.
-    await conversationState.saveChanges(context);
+    await conversationState.delete(context);
 };
 
 // CAUTION: The Memory Storage used here is for local bot debugging only. When the bot
@@ -77,7 +75,7 @@ let bot;
 try {
     bot = new MessageRoutingBot(conversationState, userState, botConfig);
 } catch (err) {
-    console.log(`Error: ${err}`);
+    console.log(`Error: ${ err }`);
     process.exit(BOT_CONFIGURATION_ERROR);
 }
 

@@ -10,7 +10,7 @@ const { SuggestedActionsBot } = require('./bot');
 // Read botFilePath and botFileSecret from .env file.
 // Note: Ensure you have a .env file and include botFilePath and botFileSecret.
 const ENV_FILE = path.join(__dirname, '.env');
-const env = require('dotenv').config({ path: ENV_FILE });
+require('dotenv').config({ path: ENV_FILE });
 
 // Get the .bot file path.
 const BOT_FILE = path.join(__dirname, (process.env.botFilePath || ''));
@@ -42,9 +42,9 @@ const adapter = new BotFrameworkAdapter({
 });
 
 // Catch-all for errors.
-adapter.onTurnError = async (turnContext, error) => {
+adapter.onTurnError = async (context, error) => {
     console.error(`\n [onTurnError]: ${ error }`);
-    await turnContext.sendActivity(`Oops. Something went wrong!`);
+    await context.sendActivity(`Oops. Something went wrong!`);
 };
 
 // Create the SuggestedActionsBot.

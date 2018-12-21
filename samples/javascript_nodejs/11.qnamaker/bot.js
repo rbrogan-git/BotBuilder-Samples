@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-const { ActivityTypes, TurnContext } = require('botbuilder');
-const { QnAMaker, QnAMakerEndpoint, QnAMakerOptions } = require('botbuilder-ai');
+const { ActivityTypes } = require('botbuilder');
+const { QnAMaker } = require('botbuilder-ai');
 
 /**
  * A simple bot that responds to utterances with answers from QnA Maker.
@@ -28,7 +28,7 @@ class QnAMakerBot {
         // By checking the incoming Activity type, the bot only calls QnA Maker in appropriate cases.
         if (turnContext.activity.type === ActivityTypes.Message) {
             // Perform a call to the QnA Maker service to retrieve matching Question and Answer pairs.
-            const qnaResults = await this.qnaMaker.generateAnswer(turnContext.activity.text);
+            const qnaResults = await this.qnaMaker.getAnswers(turnContext);
 
             // If an answer was received from QnA Maker, send the answer back to the user.
             if (qnaResults[0]) {

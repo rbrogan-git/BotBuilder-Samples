@@ -3,16 +3,13 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.AI.Luis;
 using Microsoft.Bot.Builder.AI.QnA;
-using Microsoft.Bot.Builder.BotFramework;
-using Microsoft.Bot.Builder.Integration;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Configuration;
 using Microsoft.Bot.Connector.Authentication;
@@ -61,9 +58,13 @@ namespace NLP_With_Dispatch_Bot
         {
             var secretKey = Configuration.GetSection("botFileSecret")?.Value;
             var botFilePath = Configuration.GetSection("botFilePath")?.Value;
+            if (!File.Exists(botFilePath))
+            {
+                throw new FileNotFoundException($"The .bot configuration file was not found. botFilePath: {botFilePath}");
+            }
 
             // Loads .bot configuration file and adds a singleton that your Bot can access through dependency injection.
-            var botConfig = BotConfiguration.Load(botFilePath ?? @".\BotConfiguration.bot", secretKey);
+            var botConfig = BotConfiguration.Load(botFilePath ?? @".\nlp-with-dispatch.bot", secretKey);
             services.AddSingleton(sp => botConfig ?? throw new InvalidOperationException($"The .bot configuration file could not be loaded. botFilePath: {botFilePath}"));
 
             // Retrieve current endpoint.
@@ -82,6 +83,7 @@ namespace NLP_With_Dispatch_Bot
             {
 
                 options.CredentialProvider = new SimpleCredentialProvider(endpointService.AppId, endpointService.AppPassword);
+
                 // Creates a logger for the application to use.
                 ILogger logger = _loggerFactory.CreateLogger<NlpDispatchBot>();
 
@@ -158,7 +160,7 @@ namespace NLP_With_Dispatch_Bot
                             // into the IBot-derived class (NlpDispatchBot).
                             // In this case, we're creating a custom class (wrapping the original
                             // Luis Recognizer client) that logs the results of Luis Recognizer results
-                            // into Application Insights for future anaysis.
+                            // into Application Insights for future analysis.
                             if (!(service is LuisService luis))
                             {
                                 throw new InvalidOperationException("The LUIS service is not configured correctly in your '.bot' file.");
@@ -195,7 +197,7 @@ namespace NLP_With_Dispatch_Bot
                         // into the IBot-derived class (NlpDispatchBot).
                         // In this case, we're creating a custom class (wrapping the original
                         // Luis Recognizer client) that logs the results of Luis Recognizer results
-                        // into Application Insights for future anaysis.
+                        // into Application Insights for future analysis.
                         if (!(service is DispatchService dispatch))
                         {
                             throw new InvalidOperationException("The Dispatch service is not configured correctly in your '.bot' file.");
@@ -234,7 +236,7 @@ namespace NLP_With_Dispatch_Bot
                             // into the IBot-derived class (NlpDispatchBot).
                             // In this case, we're creating a custom class (wrapping the original
                             // QnAMaker client) that logs the results of QnA Maker into Application
-                            // Insights for future anaysis.
+                            // Insights for future analysis.
                             if (!(service is QnAMakerService qna))
                             {
                                 throw new InvalidOperationException("The QnA service is not configured correctly in your '.bot' file.");

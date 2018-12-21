@@ -1,3 +1,6 @@
+# proactive messages
+Bot Framework v4 proactive messages bot sample
+
 This sample demonstrates how to send proactive messages to users by
 capturing a conversation reference, then using it later to initialize
 outbound messages.
@@ -15,43 +18,53 @@ if a bot requires some time to compile a response to the user's question, it may
 and allow the conversation to continue in the meantime. When the bot finishes compiling the response to the
 question, it will share that information with the user.
 
+## Prerequisites
+- [Node.js][4] version 8.5 or higher
+
+```bash
+# determine node version
+node --version
+```
+
 # To try this sample
 - Clone the repository
     ```bash
     git clone https://github.com/microsoft/botbuilder-samples.git
     ```
-- In a terminal, navigate to samples/javascript_nodejs/16.proactive-messages
+- In a terminal, navigate to `samples/javascript_nodejs/16.proactive-messages`
     ```bash
     cd samples/javascript_nodejs/16.proactive-messages
     ```
-- Install modules and start the bot
+- Install modules
     ```bash
-    npm i && npm start
+    npm install
+    ```
+- Start the bot
+    ```bash
+    npm start
     ```
 
-# Testing the bot using Bot Framework Emulator
-[Microsoft Bot Framework Emulator](https://github.com/microsoft/botframework-emulator) is
-a desktop application that allows bot developers to test and debug their bots on localhost
-or running remotely through a tunnel.
+# Testing the bot using Bot Framework Emulator **v4**
+[Microsoft Bot Framework Emulator](https://github.com/microsoft/botframework-emulator) is a desktop application that allows bot developers to test and debug their bots on localhost or running remotely through a tunnel.
 
-- Install the Bot Framework Emulator from [here](https://aka.ms/botframework-emulator)
+- Install the Bot Framework emulator from [here](https://github.com/microsoft/botframework-emulator/releases)
 
-Build run your bot locally and open two instances of the emulator.
+Run your bot locally and open two instances of the emulator.
 
 1. In the first emulator, type "run" to simulate a job being added to the queue.
 1. Copy the job number from the emulator log.
-1. In the second emulator, type "done <jobNumber>", where "<jobNumber>" is the job number, without the angle brackets, that you copied in the previous step. This will cause the bot to complete the job.
+1. In the second emulator, type "done \<jobNumber\>", where "\<jobNumber\>" is the job number, without the angle brackets, that you copied in the previous step. This will cause the bot to complete the job.
 1. Note that the bot sends a message proactively to the user in the first emulator when the job is completed.
 
 ## Connect to bot using Bot Framework Emulator V4
 - Launch Bot Framework Emulator
-- File -> Open Bot Configuration and navigate to javascript_nodejs/17.proactive-messages
-- Select proactive-messages.bot file
+- File -> Open Bot Configuration and navigate to `javascript_nodejs/17.proactive-messages`
+- Select `proactive-messages.bot` file
 
 # Deploy this bot to Azure
-You can use the [MSBot](https://github.com/microsoft/botbuilder-tools) Bot Builder CLI tool to clone and configure any services this sample depends on. 
+You can use the [MSBot](https://github.com/microsoft/botbuilder-tools) Bot Builder CLI tool to clone and configure any services this sample depends on.
 
-To install all Bot Builder tools - 
+To install all Bot Builder tools -
 
 Ensure you have [Node.js](https://nodejs.org/) version 8.5 or higher
 
@@ -61,8 +74,11 @@ npm i -g msbot chatdown ludown qnamaker luis-apis botdispatch luisgen
 
 To clone this bot, run
 ```
-msbot clone services -f deploymentScripts/msbotClone -n <BOT-NAME> -l <Azure-location> --subscriptionId <Azure-subscription-id>
+msbot clone services -f deploymentScripts/msbotClone -n <BOT-NAME> -l <Azure-location> --subscriptionId <Azure-subscription-id> --appId <YOUR APP ID> --appSecret <YOUR APP SECRET PASSWORD>
 ```
+
+**NOTE**: You can obtain your `appId` and `appSecret` at the Microsoft's [Application Registration Portal](https://apps.dev.microsoft.com/)
+
 
 # Proactive Messages
 In addition to responding to incoming messages, bots are frequently called on to send "proactive" messages

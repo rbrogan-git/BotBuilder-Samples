@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.IO;
 using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -55,6 +56,8 @@ namespace Microsoft.BotBuilderSamples
         /// <seealso cref="https://docs.microsoft.com/en-us/azure/bot-service/bot-service-manage-channels?view=azure-bot-service-4.0"/>
         public void ConfigureServices(IServiceCollection services)
         {
+            var environment = _isProduction ? "production" : "development";
+
             // The Memory Storage used here is for local bot debugging only. When the bot
             // is restarted, everything stored in memory will be gone.
             IStorage dataStore = new MemoryStorage();
@@ -85,18 +88,21 @@ namespace Microsoft.BotBuilderSamples
             // Make it available to our bot
             services.AddSingleton(sp => jobState);
 
+            var secretKey = Configuration.GetSection("botFileSecret")?.Value;
+            var botFilePath = Configuration.GetSection("botFilePath")?.Value;
+            if (!File.Exists(botFilePath))
+            {
+                throw new FileNotFoundException($"The .bot configuration file was not found. botFilePath: {botFilePath}");
+            }
+
+            // Loads .bot configuration file and adds a singleton that your Bot can access through dependency injection.
+            var botConfig = BotConfiguration.Load(botFilePath ?? @".\proactive-messages.bot", secretKey);
+            services.AddSingleton(sp => botConfig ?? throw new InvalidOperationException($"The .bot configuration file could not be loaded. botFilePath: {botFilePath}"));
+
             // Register the proactive bot.
             services.AddBot<ProactiveBot>(options =>
             {
-                var secretKey = Configuration.GetSection("botFileSecret")?.Value;
-                var botFilePath = Configuration.GetSection("botFilePath")?.Value;
-
-                // Loads .bot configuration file and adds a singleton that your Bot can access through dependency injection.
-                var botConfig = BotConfiguration.Load(botFilePath ?? @".\BotConfiguration.bot", secretKey);
-                services.AddSingleton(sp => botConfig ?? throw new InvalidOperationException($"The .bot configuration file could not be loaded. botFilePath: {botFilePath}"));
-
                 // Retrieve current endpoint.
-                var environment = _isProduction ? "production" : "development";
                 var service = botConfig.Services.FirstOrDefault(s => s.Type == "endpoint" && s.Name == environment);
                 if (!(service is EndpointService endpointService))
                 {
@@ -119,12 +125,15 @@ namespace Microsoft.BotBuilderSamples
 
             services.AddSingleton(sp =>
             {
-                var config = BotConfiguration.Load(@".\BotConfiguration.bot");
-                var endpointService = (EndpointService)config.Services.First(s => s.Type == "endpoint")
-                                      ?? throw new InvalidOperationException(".bot file 'endpoint' must be configured prior to running.");
+                var service = botConfig.Services.FirstOrDefault(s => s.Type == "endpoint" && s.Name == environment);
+                if (!(service is EndpointService endpointService))
+                {
+                    throw new InvalidOperationException($"The .bot file does not contain an endpoint with name '{environment}'.");
+                }
 
-                return endpointService;
+                return (EndpointService)service;
             });
+
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)

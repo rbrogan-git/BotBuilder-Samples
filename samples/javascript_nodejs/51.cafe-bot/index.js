@@ -50,19 +50,15 @@ const adapter = new BotFrameworkAdapter({
 });
 
 // Catch-all for errors.
-adapter.onTurnError = async (turnContext, error) => {
+adapter.onTurnError = async (context, error) => {
     // This check writes out errors to console log
     // NOTE: In production environment, you should consider logging this to Azure
     //       application insights.
     console.error(`\n [onTurnError]: ${ error }`);
     // Send a message to the user
-    await turnContext.sendActivity(`Oops. Something went wrong!`);
-    // Load state
-    await conversationState.load(turnContext);
+    await context.sendActivity(`Oops. Something went wrong!`);
     // Clear out state
-    await conversationState.clear(turnContext);
-    // Save state changes.
-    await conversationState.saveChanges(turnContext);
+    await conversationState.delete(context);
 };
 
 // Define a state store for your bot. See https://aka.ms/about-bot-state to learn more about using MemoryStorage.

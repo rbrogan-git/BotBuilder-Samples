@@ -1,8 +1,8 @@
 {
     "name": "generator-botbuilder",
-    "version": "4.0.10",
+    "version": "4.2.1",
     "description": "A yeoman generator for creating bots using Microsoft Bot Framework",
-    "homepage": "https://github.com/Microsoft/BotBuilder",
+    "homepage": "https://github.com/Microsoft/BotBuilder-Samples/tree/master/generators/generator-botbuilder",
     "author": {
         "name": "Microsoft",
         "email": "botframework@microsoft.com",
@@ -18,10 +18,11 @@
         "botbuilder",
         "bots",
         "bot framework",
-        "yeoman-generator"
+        "yeoman-generator",
+        "Microsoft AI"
     ],
     "dependencies": {
-        "botbuilder": "^4.0.6",
+        "botbuilder": "^4.2.0",
         "lodash": "^4.17.11",
         "yeoman-generator": "^3.1.1"
     }

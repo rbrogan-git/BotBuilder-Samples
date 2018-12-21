@@ -174,14 +174,14 @@ namespace Microsoft.BotBuilderSamples
         {
             // Validate that the user entered a minimum length for their name.
             var value = promptContext.Recognized.Value?.Trim() ?? string.Empty;
-            if (value.Length > NameLengthMinValue)
+            if (value.Length >= NameLengthMinValue)
             {
                 promptContext.Recognized.Value = value;
                 return true;
             }
             else
             {
-                await promptContext.Context.SendActivityAsync($"Names needs to be at least `{NameLengthMinValue}` characters long.").ConfigureAwait(false);
+                await promptContext.Context.SendActivityAsync($"Names needs to be at least `{NameLengthMinValue}` characters long.");
                 return false;
             }
         }
@@ -197,14 +197,14 @@ namespace Microsoft.BotBuilderSamples
         {
             // Validate that the user entered a minimum lenght for their name
             var value = promptContext.Recognized.Value?.Trim() ?? string.Empty;
-            if (value.Length > CityLengthMinValue)
+            if (value.Length >= CityLengthMinValue)
             {
                 promptContext.Recognized.Value = value;
                 return true;
             }
             else
             {
-                await promptContext.Context.SendActivityAsync($"City names needs to be at least `{CityLengthMinValue}` characters long.").ConfigureAwait(false);
+                await promptContext.Context.SendActivityAsync($"City names needs to be at least `{CityLengthMinValue}` characters long.");
                 return false;
             }
         }

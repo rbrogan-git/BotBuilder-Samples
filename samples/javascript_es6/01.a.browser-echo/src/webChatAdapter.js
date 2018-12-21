@@ -4,6 +4,7 @@
 import { ConnectionStatus } from 'botframework-webchat';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { BotAdapter, TurnContext } from 'botbuilder-core';
+import { BOT_PROFILE, USER_PROFILE } from './app';
 
 /**
  * Custom BotAdapter used for deploying a bot in a browser.
@@ -25,13 +26,15 @@ export class WebChatAdapter extends BotAdapter {
             },
             postActivity: activity => {
                 const id = Date.now().toString();
-                return Observable.fromPromise(this
-                    .onReceive(Object.assign({}, activity, {
+
+                return Observable.fromPromise(
+                    this.onReceive({
+                        ...activity,
                         id,
                         conversation: { id: 'bot' },
-                        channelId: 'WebChat'
-                    }))
-                    .then(() => id)
+                        channelId: 'WebChat',
+                        recipient: BOT_PROFILE
+                    }).then(() => id)
                 );
             }
         };
@@ -49,7 +52,8 @@ export class WebChatAdapter extends BotAdapter {
             id: Date.now().toString(),
             channelId: 'WebChat',
             conversation: { id: 'bot' },
-            from: { id: 'bot' },
+            from: BOT_PROFILE,
+            recipient: USER_PROFILE,
             timestamp: Date.now()
         }));
 
